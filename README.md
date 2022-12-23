@@ -15,14 +15,15 @@
 ## Descrição do projeto 
 
 <p align="justify">
-A codificação de Huffman é um método de compressão que usa as probabilidades de ocorrência dos símbolos no conjunto de dados a ser comprimido para determinar códigos de tamanho variável para cada símbolo. O algoritmo de compactação usando os códigos de Huffman tem quatro fases:
+Projeto final da disciplina Tópicos em Programação Orientada a Objetos. 
+O algoritmo de Huffman é um método de compressão que usa as probabilidades de ocorrência dos símbolos no conjunto de dados a ser comprimido para determinar códigos de tamanho variável para cada símbolo. O algoritmo pode ser descrito em quatro etapas:
 
   
   <ol>
       <li>Cálcular freqüência de cada caracter no arquivo.</li>
-      <li>Criar uma fila de prioridade, baseada na frequência de cada caracter presente no arquivo.</li>
-      <li>Montar uma árvore binária agrupando os caracteres de acordo a frequência</li>
-      <li>Percorrer a árvore para codificar ou decodificar os dados do arquivo.</li>
+      <li>Criar uma fila de prioridade, baseada nas frequências obtidas.</li>
+      <li>Montar uma árvore binária agrupando os caracteres de acordo com sua frequência.</li>
+      <li>Percorrer a árvore binária para codificar ou decodificar os dados do arquivo.</li>
     </ol>
   
 </p>
