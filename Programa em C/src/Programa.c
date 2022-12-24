@@ -1,5 +1,5 @@
 /*
-    Integrantes do grupo: 
+    Integrantes do grupo:
     Fabio Alves     - 20129
     Fabricio Onofre - 20130
     Gustavo Mendes  - 20136
@@ -17,14 +17,15 @@
 #include "Funcoes.c"
 
 void compactador()
-{    
+{
 
     char nome[200];
     char endereco[200];
 
-    // Seta a lingua como portugues 
+    // Seta a lingua como portugues
     setlocale(LC_ALL, "Portuguese");
-    printf("\n\tCompactador de arquivos\n");
+    printf("\n*****************************************************************\n");
+    printf("\nCOMPACTADOR DE ARQUIVOS - HUFFMAN\n");
 
     // Le o endereco e o nome do arquivo fonte
     printf("\nDigite o endereco do arquivo a ser compactado: ");
@@ -33,10 +34,12 @@ void compactador()
     scanf("\n\t%s", endereco);
     fflush(stdin);
 
-    printf("\nDigite o nome do arquivo que contera a compactacao: ");
+    printf("Digite o nome do arquivo que contera a compactacao: ");
     fflush(stdout);
     scanf("\n\t%s", nome);
     fflush(stdin);
+
+    printf("\n*****************************************************************\n");
 
     char endr_arq_comp[200] = "../output-files/";
     strcat(endr_arq_comp, nome);
@@ -46,12 +49,11 @@ void compactador()
 
     // Inicializa os arquivos
     FILE *arqOriginal = fopen(endereco, "rb");
-    
 
     // Verifica se o arquivo é válido
     if (arqOriginal == NULL)
     {
-        printf("Arquivo nao encontrado!\n");        
+        printf("Arquivo nao encontrado!\n");
         return;
     }
     FILE *arqCompactado = fopen(endr_arq_comp, "wb");
@@ -59,15 +61,15 @@ void compactador()
     // Faz o levantamento da frequencia de cada byte
     unsigned int frequencias[256];
     encontrarFrequencias(arqOriginal, frequencias);
-    //printarFrequencias(frequencias);
+    // printarFrequencias(frequencias);
 
     // Monta a fila com base nas frequencias
     Fila *fila = montarFila(frequencias);
-    //printaFila(fila);
+    // printaFila(fila);
 
     // Monta a arvore com a fila
     node *raiz = montarArvore(fila);
-    //imprimirArvore(raiz, 0);
+    // imprimirArvore(raiz, 0);
 
     // Escreve o cabecalho de informacoes no arquivo compactado
     unsigned char bitsAIgnorar = 0;
@@ -96,7 +98,7 @@ void compactador()
         if (strlen(tabela[byte]) == 0)
         {
             geraCodigo(raiz, byte, codigo, 0);
-            
+
             strcpy(tabela[byte], codigo);
         }
         // Se o codigo ja esta na tabela, usa-o1
@@ -126,51 +128,54 @@ void compactador()
             tam++;
         }
     }
-    //printaTabela(tabela);
+    // printaTabela(tabela);
 
     fwrite(&buffer, 1, sizeof(unsigned char), arqCompactado);
 
     bitsAIgnorar = 8 - (--tam);
     fseek(arqCompactado, 0, SEEK_SET);
     fwrite(&bitsAIgnorar, sizeof(unsigned char), 1, arqCompactado);
-    
-   
+
+    printf("\n///////////////////////////////////////////////////////////////////\n");
+    printf("\nRESULTADOS DA COMPACTACAO\n");
+    printf("\nArquivo COMPACTADO no diretorio: %s\n\n", endr_arq_comp);
+    float arqOrg = findSize(arqOriginal, 1);
+    float arqComp = findSize(arqCompactado, 0);
+    printf("\nTaxa de efetividade: %4.2f%% ", 100.0f - ((arqComp / arqOrg) * 100));
     // Fecha os arquivos
     fclose(arqOriginal);
     fclose(arqCompactado);
 
     apagarFolhas(raiz);
     apagarFila(fila);
-
     clock_t end = clock();
     float seconds = (float)(end - start) / CLOCKS_PER_SEC;
+    printf("\nTempo de compactacao: %.2lfs\n", seconds);
+    printf("\n///////////////////////////////////////////////////////////////////\n");
 
-    printf("\nArquivo compactado com sucesso no diretorio: \n");
-    printf("%s", endr_arq_comp);
-    printf("\n\nTempo de compactacao: %.2lf\n", seconds);
     fflush(stdout);
 }
 
 void descompactador()
 {
 
-
     char nome[200];
     char endereco[200];
 
-    printf("\n\tDescompactador de arquivos\n");
-
+    printf("\n*****************************************************************\n");
+    printf("\nDESCOMPACTADOR DE ARQUIVOS - HUFFMAN\n");
     // Le o endereco e o nome do arquivo fonte
     printf("\nDigite o endereco do arquivo a ser descompactado: ");
     fflush(stdout);
     scanf("\n\t%s", endereco);
     fflush(stdin);
 
-
-    printf("\nDigite o nome do arquivo que contera a descompactacao: ");
+    printf("Digite o nome do arquivo que contera a descompactacao: ");
     fflush(stdout);
     scanf("\n\t%s", nome);
     fflush(stdin);
+
+    printf("\n*****************************************************************\n");
 
     // Inicializa os arquivos
     char caminho_arquivo_descompactado[200] = "../output-files/";
@@ -178,7 +183,6 @@ void descompactador()
 
     clock_t start = clock();
 
-    
     FILE *arqCompactado = fopen(endereco, "rb");
 
     // Verifica se o endereco fornecido é valido
@@ -255,18 +259,24 @@ void descompactador()
         }
     }
 
+
+    printf("\n///////////////////////////////////////////////////////////////////\n");
+    printf("\nRESULTADOS DA DESCOMPACTACAO\n");
+    printf("\nArquivo DESCOMPACTADO no diretorio: %s\n\n", caminho_arquivo_descompactado);
+    float arqOrg = findSize(arqCompactado, 1);
+    float arqComp = findSize(arqDescompactado, 0);
+    //printf("\nTaxa de efetividade: %4.2f%% ", 100.0f - ((arqComp / arqOrg) * 100));
+    // Fecha os arquivos
     fclose(arqCompactado);
     fclose(arqDescompactado);
 
     apagarFolhas(raiz);
     apagarFila(fila);
-
     clock_t end = clock();
     float seconds = (float)(end - start) / CLOCKS_PER_SEC;
+    printf("\nTempo de descompactacao: %.2lfs\n", seconds);
+    printf("\n///////////////////////////////////////////////////////////////////\n");
 
-    printf("\nArquivo descompactado com sucesso no diretorio: \n");
-    printf("%s", caminho_arquivo_descompactado);
-    printf("\n\nTempo de descompactacao: %.2lf\n", seconds);
     fflush(stdout);
 }
 
@@ -277,10 +287,10 @@ int main()
     do
     {
         system("cls");
-        printf("Algoritmo de Huffman - Compactacao de arquivos\n");
+        printf("ALGORITMO DE HUFFMAN - (DES)COMPACTACAO DE ARQUIVOS\n");
         printf("\n------------------------------\n");
-        printf("1 - Compactador de arquivos\n");
-        printf("2 - Descompactador de arquivos \n");
+        printf("1 - Compactador \n");
+        printf("2 - Descompactador\n");
         printf("3 - Fechar Programa \n");
         printf("------------------------------\n");
         printf("Escolha uma opcao: ");
@@ -291,17 +301,17 @@ int main()
 
         switch (opcao)
         {
-            case 1:
-            {
-                compactador();
-                break;
-            }
+        case 1:
+        {
+            compactador();
+            break;
+        }
 
-            case 2:
-            {
-                descompactador();
-                break;
-            }
+        case 2:
+        {
+            descompactador();
+            break;
+        }
         }
 
         if (opcao != 3)

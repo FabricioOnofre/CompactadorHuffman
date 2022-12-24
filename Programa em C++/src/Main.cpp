@@ -53,7 +53,7 @@ int main()
         {
             cout << "\n";
             cout << "\nPressione ENTER para continuar. ";
-            char * teste;
+            int teste = 0;
             cin >> teste;
         }
 

@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <locale.h>
+#include <time.h>
 
 // Nodo de árvore
 typedef struct node
@@ -25,17 +27,18 @@ typedef struct Fila
 } Fila;
 
 // Inicializa a Fila de Prioridade
-Fila* criaFila() {
-    Fila* fila = (Fila*) malloc(sizeof(Fila));
+Fila *criaFila()
+{
+    Fila *fila = (Fila *)malloc(sizeof(Fila));
     fila->primeiro = NULL;
 
     return fila;
 }
 
 // Inicializa um novo nó de árvore com os valores passados
-node* criaNode(unsigned char byte, int freq)
+node *criaNode(unsigned char byte, int freq)
 {
-    node *novo = (node*) malloc(sizeof(node));
+    node *novo = (node *)malloc(sizeof(node));
 
     novo->byte = byte;
     novo->frq = freq;
@@ -50,10 +53,10 @@ item *insira(node *nodo, Fila *lista)
     if (lista->primeiro == NULL)
     {
         // Inicializa um novo nodo
-        item *novo = (item *) malloc(sizeof(item));
+        item *novo = (item *)malloc(sizeof(item));
 
-        novo->nodo      = nodo;
-        novo->prox      = NULL;
+        novo->nodo = nodo;
+        novo->prox = NULL;
 
         lista->primeiro = novo;
 
@@ -76,7 +79,7 @@ item *insira(node *nodo, Fila *lista)
 
     else // A posição adequada para inserção é procurada na Fila de Prioridade
     {
-        Fila* listaTmp = criaFila();
+        Fila *listaTmp = criaFila();
         listaTmp->primeiro = lista->primeiro->prox;
 
         lista->primeiro->prox = insira(nodo, listaTmp);
@@ -108,14 +111,14 @@ int tamanho(Fila *lista)
 }
 
 // A Fila de Prioridade é montada, sendo que cada item de fila recebe um nodo de árvore
-Fila* montarFila(unsigned int* frequencias)
+Fila *montarFila(unsigned int *frequencias)
 {
-    Fila* fila = criaFila();
+    Fila *fila = criaFila();
     for (int i = 0; i < 256; i++)
     {
         if (frequencias[i] != 0)
         {
-            node* novo = criaNode(i, frequencias[i]);
+            node *novo = criaNode(i, frequencias[i]);
             insira(novo, fila);
         }
     }
@@ -138,8 +141,6 @@ node *desenfileirar(Fila *lista)
 
     return result;
 }
-
-
 
 // Seta o valor do nó esquerdo e direito dessa raiz de árvore
 void setFilhos(node *raiz, node *esquerda, node *direita)
@@ -170,12 +171,12 @@ void setFilhos(node *raiz, node *esquerda, node *direita)
 }
 
 // A ávore binária é montada, através da junção dos item da Fila de Prioridade
-node* montarArvore(Fila *lista)
+node *montarArvore(Fila *lista)
 {
     while (tamanho(lista) >= 2)
     {
         node *esquerda = desenfileirar(lista);
-        node *direita  = desenfileirar(lista);
+        node *direita = desenfileirar(lista);
 
         node *novo = criaNode('\0', esquerda->frq + direita->frq);
         setFilhos(novo, esquerda, direita);
@@ -204,10 +205,12 @@ int altura(node *raiz)
 }
 
 // Preenche a tabela de frequências de acordo com a aparição de cada byte no arquivo
-void encontrarFrequencias(FILE* arquivo, unsigned int* frequencias) {
-    
+void encontrarFrequencias(FILE *arquivo, unsigned int *frequencias)
+{
+
     // Verifica se o arquivo é valido
-    if (arquivo == NULL) {
+    if (arquivo == NULL)
+    {
         printf("Arquivo invalido!\n");
         return;
     }
@@ -228,18 +231,17 @@ char **alocaTabela(int colunas)
     // Inicializa a tabela
     char **tabela;
     int pos;
-    tabela = (char**) malloc(sizeof(char*) * 256);
+    tabela = (char **)malloc(sizeof(char *) * 256);
     int col = colunas + 1;
 
     for (pos = 0; pos < 256; pos++)
     {
-        tabela[pos] = (char*) malloc(colunas * sizeof(char));
-        memset(tabela[pos], 0 , sizeof(tabela[pos]));
+        tabela[pos] = (char *)malloc(colunas * sizeof(char));
+        memset(tabela[pos], 0, sizeof(tabela[pos]));
     }
 
     return tabela;
 }
-
 
 // Gera o caminho até a folha da árvore binária que contém o byte procurado
 int geraCodigo(node *noArvore, unsigned char byteProc, char *resultado, int tamanho)
@@ -274,8 +276,9 @@ int geraCodigo(node *noArvore, unsigned char byteProc, char *resultado, int tama
     }
 }
 
-// Retona se o bit verificado dessa posição do byte atual é 1 ou 0 
-unsigned char getBit(unsigned char byte, int pos){
+// Retona se o bit verificado dessa posição do byte atual é 1 ou 0
+unsigned char getBit(unsigned char byte, int pos)
+{
     unsigned char mascara = (0b00000001 << pos);
     return (byte & mascara) >> pos;
 }
@@ -289,7 +292,7 @@ void apagarFolhas(node *raiz)
     }
     else
     {
-        apagarFolhas(raiz->left );
+        apagarFolhas(raiz->left);
         apagarFolhas(raiz->right);
     }
 }
@@ -303,7 +306,7 @@ void apagarFila(Fila *lista)
 // Exibe todas as folhas da árvore binária
 void imprimirArvore(node *raiz, int tam)
 {
- 
+
     if (raiz->left == NULL && raiz->right == NULL)
     {
         printf("Folha: %c Altura: %d\n", raiz->byte, tam);
@@ -348,15 +351,70 @@ void printaTabela(char **tabela)
     fflush(stdout);
 }
 
+float findSize(FILE *arqOriginal, int compactador)
+{
+
+    fseek(arqOriginal, 0L, SEEK_END);
+
+    // calculating the size of the file
+    long int qtdByt = ftell(arqOriginal);
+    float qtdByte = (float)qtdByt;
+
+    float resultado = 0;
+    char medida[] = "Bytes";
+    // Byte
+    if (qtdByte < 1024.0f)
+    {
+        resultado = qtdByte;
+        char medida2[] = " Bytes";
+        strcpy(medida, medida2);
+    }
+    // KB
+    else if (qtdByte < 1048576.0f)
+    {
+        resultado = qtdByte / 1024.0f;
+        char medida2[] = " KB";
+        strcpy(medida, medida2);
+    }
+    // MB
+    else if (qtdByte < 1073741824.0f)
+    {
+        resultado = qtdByte / 1048576.0f;
+        char medida2[] = " MB";
+        strcpy(medida, medida2);
+    }
+    // GB
+    else
+    {
+        resultado = qtdByte / 1073741824.0f;
+        char medida2[] = " GB";
+        strcpy(medida, medida2);
+    }
+
+    if (compactador)
+    {
+        printf("Tamanho do arquivo COMPACTADO: %4.2f%s \n", resultado, medida);
+    }
+    else
+    {
+        printf("Tamanho do arquivo DESCOMPACTADO: %4.2f%s \n", resultado, medida);
+    }
+
+    return resultado;
+}
+
 // Exibe a Tabela de Frequência do arquivo
-void printarFrequencias(unsigned int* frequencias) {
-    for(int pos = 0; pos < 256; pos++) {
+void printarFrequencias(unsigned int *frequencias)
+{
+    for (int pos = 0; pos < 256; pos++)
+    {
         printf("Posicao: %c --- Frq: %d\n", pos, frequencias[pos]);
     }
     fflush(stdout);
 }
 
-void esperar() {
+void esperar()
+{
     printf("\nPressione ENTER para continuar. ");
     fflush(stdout);
     getchar();
