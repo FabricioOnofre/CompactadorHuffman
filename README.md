@@ -1,4 +1,4 @@
-# ❗ Algoritmo de Huffman ❗
+# Algoritmo de Huffman
 
 <p align="left">
    <img src="http://img.shields.io/static/v1?label=STATUS&message=CONCLUIDO&color=RED&style=for-the-badge"/>
