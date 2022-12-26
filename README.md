@@ -32,7 +32,3 @@ O algoritmo de Huffman é um método de compressão que usa as probabilidades de
 
 <div align="center"><a href="https://imgbox.com/fIrZr3ro" target="_blank"><img src="https://thumbs2.imgbox.com/20/ec/fIrZr3ro_t.jpeg" alt="image host"/></a> <a href="https://imgbox.com/ct18HmEG" target="_blank"><img src="https://thumbs2.imgbox.com/65/99/ct18HmEG_t.jpeg" alt="image host"/></a>
 </div>
-
-## Desenvolvedor
-
-[<img src="https://avatars.githubusercontent.com/u/68614980?v=4" width=115><br><sub>Fabricio Onofre</sub>]  
